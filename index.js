@@ -2,11 +2,12 @@ const express = require("express");
 const app = express();
 const port = 3000;
 const cors = require("cors");
+require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 app.use(cors({ origin: "*" })); // Allow all origins
 app.use(express.json());
-
+console.log(process.env);
 // Optional request logging for debugging
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
@@ -14,8 +15,7 @@ app.use((req, res, next) => {
 });
 
 // MongoDB connection
-const uri =
-  "mongodb+srv://studyMateDB:RAIKDThEnWJMoKnF@cluster0.ik3guvg.mongodb.net/?appName=Cluster0";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ik3guvg.mongodb.net/?appName=Cluster0`;
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -175,7 +175,7 @@ async function run() {
         );
 
         if (!result.value) {
-          console.log("Not found: Attempted ID ->", id); 
+          console.log("Not found: Attempted ID ->", id);
           return res
             .status(404)
             .json({ error: "Request not found or you don't own it" });
