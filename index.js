@@ -7,16 +7,6 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 app.use(cors({ origin: "*" })); // Allow all origins
 app.use(express.json());
 
-const admin = require("firebase-admin");
-
-const serviceAccount = require("path/to/serviceAccountKey.json");
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
-
-
-
 // Optional request logging for debugging
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
@@ -145,6 +135,24 @@ async function run() {
         res.status(500).json({ error: "Failed to create partner request" });
       }
     });
+    app.patch("/user/:id/increase-partner", async (req, res) => {
+      const { id } = req.params;
+
+      try {
+        const filter = { _id: new ObjectId(id) };
+        const update = { $inc: { partnerCount: 1 } }; // increment by 1
+        const result = await userCollection.updateOne(filter, update);
+
+        if (result.modifiedCount === 0) {
+          return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json({ message: "Partner count increased successfully" });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Failed to increase partner count" });
+      }
+    });
 
     // PATCH - Update partner request (FINAL WORKING VERSION)
     app.patch("/partner-request/:id", async (req, res) => {
@@ -167,7 +175,7 @@ async function run() {
         );
 
         if (!result.value) {
-          console.log("Not found: Attempted ID ->", id); // Debug log
+          console.log("Not found: Attempted ID ->", id); 
           return res
             .status(404)
             .json({ error: "Request not found or you don't own it" });
