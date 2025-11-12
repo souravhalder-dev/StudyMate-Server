@@ -31,7 +31,7 @@ async function run() {
     const db = client.db("studyDB");
 
     const userCollection = db.collection("user");
-    const partnerRequestCollection = db.collection("partnerRequest");
+   
 
     // GET all users
     app.get("/user", async (req, res) => {
@@ -109,9 +109,7 @@ async function run() {
             .json({ error: "Missing userEmail query parameter" });
         }
 
-        const requests = await partnerRequestCollection
-          .find({ userEmail })
-          .toArray();
+        const requests = await userCollection.find({ userEmail }).toArray();
 
         res.status(200).json(requests);
       } catch (err) {
@@ -128,7 +126,7 @@ async function run() {
           return res.status(400).json({ error: "Missing required fields" });
         }
 
-        const result = await partnerRequestCollection.insertOne(newRequest);
+        const result = await userCollection.insertOne(newRequest);
         res.status(201).json({ insertedId: result.insertedId });
       } catch (err) {
         console.error("Create Partner Request Error:", err);
@@ -140,7 +138,7 @@ async function run() {
 
       try {
         const filter = { _id: new ObjectId(id) };
-        const update = { $inc: { partnerCount: 1 } }; 
+        const update = { $inc: { partnerCount: 1 } };
         const result = await userCollection.updateOne(filter, update);
 
         if (result.modifiedCount === 0) {
@@ -154,13 +152,12 @@ async function run() {
       }
     });
 
-    // PATCH - Update partner request 
+    // PATCH - Update partner request
     app.patch("/partner-request/:id", async (req, res) => {
       try {
         const { id } = req.params;
         const updates = req.body;
 
-    
         let query;
         try {
           query = { _id: new ObjectId(id) };
@@ -168,7 +165,7 @@ async function run() {
           return res.status(400).json({ error: "Invalid ID format" });
         }
 
-        const result = await partnerRequestCollection.findOneAndUpdate(
+        const result = await userCollection.findOneAndUpdate(
           query,
           { $set: { ...updates, updatedAt: new Date() } },
           { returnDocument: "after" }
@@ -196,7 +193,7 @@ async function run() {
           return res.status(400).json({ error: "Invalid request ID" });
         }
 
-        const result = await partnerRequestCollection.deleteOne({
+        const result = await userCollection.deleteOne({
           _id: new ObjectId(id),
         });
 
