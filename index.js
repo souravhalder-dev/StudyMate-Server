@@ -7,6 +7,16 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 app.use(cors({ origin: "*" })); // Allow all origins
 app.use(express.json());
 
+const admin = require("firebase-admin");
+
+const serviceAccount = require("path/to/serviceAccountKey.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
+
+
 // Optional request logging for debugging
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
@@ -195,7 +205,7 @@ async function run() {
 
     // MongoDB Ping
     await client.db("admin").command({ ping: 1 });
-    console.log("✅ Successfully connected to MongoDB!");
+    console.log(" Successfully connected to MongoDB!");
   } finally {
     // keep connection open
   }
@@ -208,5 +218,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`🚀 Server running on http://localhost:${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });
