@@ -140,7 +140,7 @@ async function run() {
 
       try {
         const filter = { _id: new ObjectId(id) };
-        const update = { $inc: { partnerCount: 1 } }; // increment by 1
+        const update = { $inc: { partnerCount: 1 } }; 
         const result = await userCollection.updateOne(filter, update);
 
         if (result.modifiedCount === 0) {
@@ -154,13 +154,13 @@ async function run() {
       }
     });
 
-    // PATCH - Update partner request (FINAL WORKING VERSION)
+    // PATCH - Update partner request 
     app.patch("/partner-request/:id", async (req, res) => {
       try {
         const { id } = req.params;
         const updates = req.body;
 
-        // Support both string ID and ObjectId
+    
         let query;
         try {
           query = { _id: new ObjectId(id) };
