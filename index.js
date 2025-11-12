@@ -5,14 +5,14 @@ const cors = require("cors");
 require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
-app.use(cors({ origin: "*" })); // Allow all origins
+app.use(cors({ origin: "*" })); 
 app.use(express.json());
-console.log(process.env);
-// Optional request logging for debugging
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  next();
-});
+
+
+// app.use((req, res, next) => {
+ 
+//   next();
+// });
 
 // MongoDB connection
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ik3guvg.mongodb.net/?appName=Cluster0`;
@@ -123,7 +123,7 @@ async function run() {
     // POST create new partner request
     app.post("/partner-request", async (req, res) => {
       try {
-        const newRequest = req.body; // should include userEmail
+        const newRequest = req.body; 
         if (!newRequest.userEmail || !newRequest.partnerName) {
           return res.status(400).json({ error: "Missing required fields" });
         }
@@ -140,7 +140,7 @@ async function run() {
 
       try {
         const filter = { _id: new ObjectId(id) };
-        const update = { $inc: { partnerCount: 1 } }; // increment by 1
+        const update = { $inc: { partnerCount: 1 } }; 
         const result = await userCollection.updateOne(filter, update);
 
         if (result.modifiedCount === 0) {
@@ -154,13 +154,13 @@ async function run() {
       }
     });
 
-    // PATCH - Update partner request (FINAL WORKING VERSION)
+    // PATCH - Update partner request 
     app.patch("/partner-request/:id", async (req, res) => {
       try {
         const { id } = req.params;
         const updates = req.body;
 
-        // Support both string ID and ObjectId
+     
         let query;
         try {
           query = { _id: new ObjectId(id) };
@@ -212,10 +212,10 @@ async function run() {
     });
 
     // MongoDB Ping
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(" Successfully connected to MongoDB!");
   } finally {
-    // keep connection open
+
   }
 }
 
